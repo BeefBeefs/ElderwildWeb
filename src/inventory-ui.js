@@ -1,0 +1,121 @@
+import{ITEM_TYPES,EQUIPMENT_SLOTS}from'./items.js';
+import{makeSprite}from'./sprite-ui.js';
+
+const style=document.createElement('style');
+style.textContent=`.inventory-grid.compact-inventory-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}.inventory-slot.compact-item-slot{padding:0!important;min-height:78px;display:block}.inventory-item-button,.equipment-item-button{width:100%;height:100%;min-height:76px;border:0!important;background:transparent!important;display:flex;align-items:center;justify-content:center;position:relative;padding:8px!important}.inventory-item-button .game-sprite,.equipment-item-button .game-sprite{width:32px;height:32px;min-width:32px}.inventory-qty{position:absolute;right:6px;bottom:4px;color:#72d88d;font-weight:700;font-size:12px;text-shadow:0 1px 2px #000}.equipment-grid.compact-equipment-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px!important}.equipment-slot.compact-equipment-slot{padding:6px!important;min-height:86px;text-align:center}.equipment-slot.compact-equipment-slot>strong{display:block;font-size:10px;color:#a7b5ab;margin-bottom:4px}.equipment-item-button{min-height:58px}.inventory-detail-backdrop{position:fixed;inset:0;z-index:40;background:#000b;display:flex;align-items:center;justify-content:center;padding:18px}.inventory-detail-modal{width:min(430px,100%);max-height:min(82vh,720px);overflow:auto;background:#171d1a;border:1px solid #577360;border-radius:12px;box-shadow:0 12px 38px #000d;padding:16px}.inventory-detail-head{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:10px;align-items:center}.inventory-detail-art{width:52px;height:52px;display:flex;align-items:center;justify-content:center;background:#111613;border:1px solid #35493d;border-radius:8px}.inventory-detail-art .game-sprite{transform:scale(1.4);image-rendering:pixelated}.inventory-detail-head h3{margin:0;color:#72d88d}.inventory-detail-head p{margin:3px 0 0;color:#a7b5ab;font-size:12px}.inventory-detail-close{width:34px;height:34px;padding:0!important;border-radius:7px}.inventory-detail-description{margin:14px 0;color:#d9e4dc;line-height:1.45}.inventory-detail-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:12px 0}.inventory-detail-stat{padding:8px;background:#111613;border:1px solid #304238;border-radius:7px;font-size:12px}.inventory-detail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.inventory-detail-actions button{width:100%;min-width:0}.inventory-detail-actions .wide{grid-column:1/-1}.inventory-detail-actions .danger{background:#4a2626!important;border-color:#754141!important}.inventory-detail-actions .sell{background:#3b3821!important;border-color:#716b39!important}.inventory-detail-note{margin-top:10px;color:#91a096;font-size:11px}@media(max-width:420px){.equipment-grid.compact-equipment-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.inventory-detail-actions{grid-template-columns:1fr 1fr}}`;
+document.head.appendChild(style);
+
+const backdrop=document.createElement('div');
+backdrop.className='inventory-detail-backdrop hidden';
+backdrop.innerHTML='<section class="inventory-detail-modal" role="dialog" aria-modal="true" aria-label="Item details"></section>';
+document.body.appendChild(backdrop);
+const modal=backdrop.querySelector('.inventory-detail-modal');
+
+function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function game(){return window.__elderwildGame}
+function spriteFor(item){return makeSprite('items',item.name.replace(/ \+\d+$/,''))}
+function statRows(item){
+  const rows=[];
+  if(item.attack)rows.push(['Attack',`${item.attack>=0?'+':''}${item.attack}`]);
+  if(item.strength)rows.push(['Strength',`${item.strength>=0?'+':''}${item.strength}`]);
+  if(item.defense)rows.push(['Defense',`${item.defense>=0?'+':''}${item.defense}`]);
+  if(item.hp)rows.push(['HP',`${item.hp>=0?'+':''}${item.hp}`]);
+  if(item.healing)rows.push(['Healing',String(item.healing)]);
+  if(item.slot===EQUIPMENT_SLOTS.WEAPON)rows.push(['Attack speed',`${item.attackSpeed||4} ticks`]);
+  if(item.type===ITEM_TYPES.EQUIPMENT){
+    const req=item.slot===EQUIPMENT_SLOTS.WEAPON?`Attack ${item.requiredAttack||1}`:`Defense ${item.requiredDefense||1}`;
+    rows.push(['Requires',req]);
+    rows.push(['Upgrade',`+${item.upgradeLevel||0}`]);
+  }
+  return rows;
+}
+function closeModal(){backdrop.classList.add('hidden');modal.innerHTML=''}
+backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+function cleanupSelectedFood(g,item){if(g.state.equippedFoodName===item.name&&!g.state.inventory.some(i=>i.name===item.name&&i.quantity>0))g.clearFood()}
+function finish(g){g.save();g.onChange();setTimeout(enhanceInventory,0)}
+function sell(g,item,qty){
+  qty=Math.max(1,Math.min(qty,item.quantity||1));
+  const unit=Math.max(0,Number(item.value)||0);
+  if(unit<=0||item.type===ITEM_TYPES.CURRENCY||item.type===ITEM_TYPES.PET)return;
+  if(!g.removeItem(item,qty))return;
+  g.addItem('Coins',unit*qty);
+  cleanupSelectedFood(g,item);closeModal();finish(g);
+}
+function drop(g,item,qty){
+  qty=Math.max(1,Math.min(qty,item.quantity||1));
+  if(item.type===ITEM_TYPES.CURRENCY||item.type===ITEM_TYPES.PET)return;
+  if(!g.removeItem(item,qty))return;
+  cleanupSelectedFood(g,item);closeModal();finish(g);
+}
+
+function actionButton(label,cls,handler,disabled=false){const b=document.createElement('button');b.className=`action-button ${cls||''}`;b.textContent=label;b.disabled=disabled;b.addEventListener('click',handler);return b}
+function openInventoryItem(index){
+  const g=game(),item=g?.state?.inventory?.[index];if(!g||!item||item.quantity<=0)return;
+  renderModal(g,item,{inventoryIndex:index});
+}
+function openEquipped(slot){const g=game(),item=g?.getEquipped(slot);if(!g||!item)return;renderModal(g,item,{equippedSlot:slot})}
+function renderModal(g,item,context){
+  const quantity=context.inventoryIndex!=null?item.quantity:1,total=(Number(item.value)||0)*quantity;
+  modal.innerHTML='';
+  const head=document.createElement('div');head.className='inventory-detail-head';
+  const art=document.createElement('div');art.className='inventory-detail-art';const sprite=spriteFor(item);if(sprite)art.appendChild(sprite);else art.textContent='•';
+  const title=document.createElement('div');title.innerHTML=`<h3>${esc(item.name)}</h3><p>${esc(item.type)}${item.slot&&item.slot!==EQUIPMENT_SLOTS.NONE?` · ${esc(item.slot)}`:''} · ×${quantity}</p>`;
+  const close=actionButton('×','inventory-detail-close',closeModal);head.append(art,title,close);modal.appendChild(head);
+  const desc=document.createElement('p');desc.className='inventory-detail-description';desc.textContent=item.description||`${item.name}.`;modal.appendChild(desc);
+  const stats=document.createElement('div');stats.className='inventory-detail-stats';
+  const base=[['Value',`${Number(item.value||0).toLocaleString()} coins`],...(quantity>1?[['Stack value',`${total.toLocaleString()} coins`]]:[]),...statRows(item)];
+  stats.innerHTML=base.map(([k,v])=>`<div class="inventory-detail-stat"><strong>${esc(k)}</strong><br>${esc(v)}</div>`).join('');modal.appendChild(stats);
+  const actions=document.createElement('div');actions.className='inventory-detail-actions';
+  if(context.equippedSlot){
+    actions.appendChild(actionButton('Unequip','wide',()=>{if(g.unequipItem(context.equippedSlot)){closeModal();finish(g)}}));
+    const note=document.createElement('div');note.className='inventory-detail-note';note.textContent='Unequip this item to combine, sell, or drop it from your inventory.';modal.append(actions,note);
+  }else{
+    if(item.type===ITEM_TYPES.EQUIPMENT){
+      actions.appendChild(actionButton('Equip','',()=>{if(g.equipItem(item)){closeModal();finish(g)}},!g.meetsEquipmentRequirement(item)));
+      const combinable=item.quantity>=2&&(item.upgradeLevel||0)<10;
+      actions.appendChild(actionButton(`Combine 2 → +${(item.upgradeLevel||0)+1}`,'',()=>{if(g.combineEquipment(item)){closeModal();finish(g)}},!combinable));
+    }
+    if(item.type===ITEM_TYPES.FOOD&&item.healing>0)actions.appendChild(actionButton(g.state.equippedFoodName===item.name?'Food Selected':'Select Food','',()=>{g.selectFood(item);closeModal();finish(g)},g.state.equippedFoodName===item.name));
+    const canSell=(Number(item.value)||0)>0&&item.type!==ITEM_TYPES.CURRENCY&&item.type!==ITEM_TYPES.PET;
+    const canDrop=item.type!==ITEM_TYPES.CURRENCY&&item.type!==ITEM_TYPES.PET;
+    actions.appendChild(actionButton(`Sell 1${canSell?` (+${Number(item.value).toLocaleString()})`:''}`,'sell',()=>sell(g,item,1),!canSell));
+    if(item.quantity>1)actions.appendChild(actionButton(`Sell All${canSell?` (+${total.toLocaleString()})`:''}`,'sell',()=>{if(confirm(`Sell all ${item.quantity} × ${item.name} for ${total.toLocaleString()} coins?`))sell(g,item,item.quantity)},!canSell));
+    actions.appendChild(actionButton('Drop 1','danger',()=>drop(g,item,1),!canDrop));
+    if(item.quantity>1)actions.appendChild(actionButton('Drop All','danger',()=>{if(confirm(`Drop all ${item.quantity} × ${item.name}?`))drop(g,item,item.quantity)},!canDrop));
+    modal.appendChild(actions);
+  }
+  backdrop.classList.remove('hidden');
+}
+
+function compactInventoryGrid(g){
+  const grid=document.querySelector('#view .inventory-grid');if(!grid)return;
+  grid.classList.add('compact-inventory-grid');
+  const visible=g.state.inventory.filter(i=>i.quantity>0),slots=[...grid.querySelectorAll('.inventory-slot')];
+  slots.forEach((slot,i)=>{
+    const item=visible[i];if(!item)return;
+    const index=g.state.inventory.indexOf(item);slot.classList.add('compact-item-slot');slot.innerHTML='';
+    const button=document.createElement('button');button.className='inventory-item-button';button.type='button';button.title=item.name;button.setAttribute('aria-label',`${item.name}, quantity ${item.quantity}`);
+    const sprite=spriteFor(item);if(sprite)button.appendChild(sprite);else button.textContent='•';
+    const qty=document.createElement('span');qty.className='inventory-qty';qty.textContent=`×${item.quantity}`;button.appendChild(qty);button.addEventListener('click',()=>openInventoryItem(index));slot.appendChild(button);
+  });
+}
+function compactEquipment(g){
+  const grid=document.querySelector('#view .equipment-grid');if(!grid)return;grid.classList.add('compact-equipment-grid');
+  [...grid.querySelectorAll('.equipment-slot')].forEach(slot=>{
+    const label=slot.querySelector('strong')?.textContent?.trim();if(!label)return;
+    if(label==='Food'){
+      const food=g.selectedFood();slot.classList.add('compact-equipment-slot');slot.innerHTML='<strong>Food</strong>';if(!food){slot.insertAdjacentHTML('beforeend','<small class="muted">Empty</small>');return}
+      const index=g.state.inventory.indexOf(food),button=document.createElement('button');button.className='equipment-item-button';button.title=food.name;const sprite=spriteFor(food);if(sprite)button.appendChild(sprite);const qty=document.createElement('span');qty.className='inventory-qty';qty.textContent=`×${food.quantity}`;button.appendChild(qty);button.addEventListener('click',()=>openInventoryItem(index));slot.appendChild(button);return;
+    }
+    const item=g.getEquipped(label);slot.classList.add('compact-equipment-slot');slot.innerHTML=`<strong>${esc(label)}</strong>`;
+    if(!item){slot.insertAdjacentHTML('beforeend','<small class="muted">Empty</small>');return}
+    const button=document.createElement('button');button.className='equipment-item-button';button.title=item.name;const sprite=spriteFor(item);if(sprite)button.appendChild(sprite);button.addEventListener('click',()=>openEquipped(label));slot.appendChild(button);
+  });
+}
+function enhanceInventory(){const g=game();if(!g)return;const heading=[...document.querySelectorAll('#view h2')].find(h=>h.textContent.trim()==='Inventory');if(!heading)return;compactInventoryGrid(g);compactEquipment(g)}
+let queued=false;function queue(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhanceInventory()})}
+new MutationObserver(queue).observe(document.querySelector('#view'),{childList:true,subtree:true});
+window.addEventListener('elderwild-game-state',queue);
+queue();
