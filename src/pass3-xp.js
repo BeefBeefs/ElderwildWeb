@@ -1,12 +1,9 @@
 import{Game}from'./game.js';
 import{ENEMIES}from'./combat.js';
 
-// ScapeRunner progression bonuses:
-// skilling: +1% per 10 skill levels, capped at +10%.
-// combat: +1% per 20 combat levels the player is above the enemy, capped at +10%.
 function skillXpPercent(level){return Math.min(10,Math.floor(Math.max(1,Number(level)||1)/10))}
 function combatXpPercent(playerCombatLevel,enemyCombatLevel){return Math.min(10,Math.max(0,Math.floor(((Number(playerCombatLevel)||0)-(Number(enemyCombatLevel)||0))/20)))}
-function enemyCombatLevel(enemy){return Math.max(1,Math.floor(((Number(enemy?.attack)||0)+(Number(enemy?.strength)||0)+(Number(enemy?.defense)||0))/3))}
+function enemyCombatLevel(enemy){return Math.max(1,Math.floor(((Number(enemy?.attack)||0)+(Number(enemy?.strength)||0)+(Number(enemy?.defense)||0)+(Number(enemy?.hp)||0))/4))}
 
 if(!Game.prototype.__pass3XpPatched){
   Game.prototype.skillXpBonusPercent=function(skillName){return skillXpPercent(this.getSkill(skillName).level)};
