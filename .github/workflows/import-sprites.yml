@@ -1,0 +1,72 @@
+name: Import sprites
+
+on:
+  push:
+    branches: [sprite-import-temp]
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: sprite-import-temp
+      - name: Download and unpack sprites
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d assets/enemies ] && [ -d assets/items ]; then
+            echo "Sprites already imported."
+            exit 0
+          fi
+          cat > /tmp/urls.txt <<'URLS'
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_000?token=AY3T7K6MBDJAKQWKM3RAY6DKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_001?token=AY3T7KYSWIXPKROL7VMKH33KUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_002?token=AY3T7K4PF6SYKYZVYNMUEBTKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_003?token=AY3T7K4JRATHKBQUKX73BT3KUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_004?token=AY3T7K7VDCBC3HLBZ3YXS3TKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_005?token=AY3T7K4R5OJJEXFMX3SRRR3KUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_006?token=AY3T7K65QJIALWJBB4BWZHTKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_007?token=AY3T7K6WXQ735TGP3FZSZZDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_008?token=AY3T7K54XTB7VNUEJPWWAULKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_009?token=AY3T7K6G5SCBXSEQPSW4XLDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_010?token=AY3T7K67ZKV3RB5SXIOORIDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_011?token=AY3T7K3MDPX7ORLH6WVPDTTKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_012?token=AY3T7KZCPUK4XOE7YVOBGHDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_013?token=AY3T7K5HZ3MWFH2FLKI22JLKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_014?token=AY3T7KZBLY35THAWEKIZ6G3KUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_015?token=AY3T7K4IOLPDVHDGU7KS5STKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_016?token=AY3T7K6ZHBMUL2322QBT7NLKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_017?token=AY3T7KYQU7TGWUAN7BQD4LLKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_018?token=AY3T7KZUL62VOLL7YVJTRHDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_019?token=AY3T7K2DAITJNGVWFY77PMLKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_020?token=AY3T7KZCFTA6WQWQLQURU33KUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_021?token=AY3T7K6LOJINMXXQOXE45BDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_022?token=AY3T7K5YEVLXDACPZVISDKTKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_023?token=AY3T7K2JGJQR6HITHGMNRWDKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_024?token=AY3T7K5TXP55LWOGZLXRTBTKUB2BHAA
+https://raw.githubusercontent.com/BeefBeefs/ScapeRunner/web-asset-export/web-export/chunk_025?token=AY3T7KY62LCGWHKOK5LRQYTKUB2BHAA
+URLS
+          rm -f /tmp/chunk_*
+          i=0
+          while IFS= read -r url; do
+            file=$(printf '/tmp/chunk_%03d' "$i")
+            curl -fL --retry 3 --retry-delay 1 "$url" -o "$file"
+            i=$((i+1))
+          done < /tmp/urls.txt
+          cat /tmp/chunk_* > /tmp/web-sprites.tar.gz.b64
+          base64 -d /tmp/web-sprites.tar.gz.b64 > /tmp/web-sprites.tar.gz
+          rm -rf assets/Enemies assets/Items assets/enemies assets/items
+          mkdir -p assets
+          tar -xzf /tmp/web-sprites.tar.gz -C assets
+          mv assets/Enemies assets/enemies
+          mv assets/Items assets/items
+          printf 'enemy_files=%s\nitem_files=%s\n' "$(find assets/enemies -type f | wc -l)" "$(find assets/items -type f | wc -l)" > assets/sprite-import.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          git commit -m "Stage imported ScapeRunner sprites"
+          git push origin HEAD:sprite-import-temp
