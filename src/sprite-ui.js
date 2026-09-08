@@ -11,7 +11,7 @@ document.head.appendChild(style);
 
 const slug=value=>String(value).replace(/ \+\d+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
 const enemyNames=[...ENEMIES.map(e=>e.name)].sort((a,b)=>b.length-a.length);
-const itemNames=[...new Set(ITEMS.map(i=>i.name.replace(/ \+\d+$/,'')))].sort((a,b)=>b.length-a.length);
+const itemNames=[...new Set(Object.values(ITEMS).map(i=>i?.name).filter(Boolean).map(name=>name.replace(/ \+\d+$/,'')))].sort((a,b)=>b.length-a.length);
 const atlasUrl={};
 if(manifest){for(const key of ['enemies','items']){const group=manifest[key];if(group)atlasUrl[key]=new URL('../'+group.image,import.meta.url).href}}
 
