@@ -15,7 +15,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl -fL 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-3fe0-81f5-918b-7d6cc271aaf8/raw?se=2026-09-08T20%3A54%3A44Z&sp=r&sv=2026-02-06&sr=b&scid=0b35f176-d2a2-5e17-a166-6be773ce5a36&skoid=de71a0d5-fb02-4fce-be69-9296aced242b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-08T07%3A42%3A18Z&ske=2026-09-09T07%3A42%3A18Z&sks=b&skv=2026-02-06&sig=15lJJNqSQez7JGU0eA7EPPr7w8QHaxEE0Gs8FBV4otM%3D' -o /tmp/web-sprites.zip
+          curl -fL 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-0d68-81f5-b450-79160fa3d852/raw?se=2026-09-08T21%3A02%3A00Z&sp=r&sv=2026-02-06&sr=b&scid=3f89b163-c9b6-548f-b4dc-7ba57829bd0d&skoid=de71a0d5-fb02-4fce-be69-9296aced242b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-08T19%3A16%3A05Z&ske=2026-09-09T19%3A16%3A05Z&sks=b&skv=2026-02-06&sig=28l/k1aeQ%2BVscIT8uJZMbMnbtrRR4Ay4lazzaw/W85w%3D' -o /tmp/web-sprites.zip
           unzip -q /tmp/web-sprites.zip -d /tmp/artifact
           tar -xzf /tmp/artifact/web-sprites.tar.gz -C /tmp
           python - <<'PY'
