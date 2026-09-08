@@ -1,59 +1,14 @@
 export const ITEM_TYPES={MATERIAL:'Material',FOOD:'Food',CURRENCY:'Currency',EQUIPMENT:'Equipment',PET:'Pet'};
 export const EQUIPMENT_SLOTS={NONE:'None',HEAD:'Head',BODY:'Body',LEGS:'Legs',WEAPON:'Weapon',SHIELD:'Shield',GLOVES:'Gloves',BOOTS:'Boots',AMULET:'Amulet',RING:'Ring',FOOD:'Food'};
 
-function item(name,{icon='•',description='',type=ITEM_TYPES.MATERIAL,slot=EQUIPMENT_SLOTS.NONE,value=0,attack=0,strength=0,defense=0,hp=0,requiredAttack=0,requiredDefense=0,healing=0,attackSpeed=4,upgradeLevel=0,isJunk=false}={}){
-  return{name,icon,description,type,slot,value,attack,strength,defense,hp,requiredAttack,requiredDefense,healing,attackSpeed,upgradeLevel,isJunk};
-}
+function item(name,{icon='•',description='',type=ITEM_TYPES.MATERIAL,slot=EQUIPMENT_SLOTS.NONE,value=0,attack=0,strength=0,defense=0,hp=0,requiredAttack=0,requiredDefense=0,healing=0,attackSpeed=4,upgradeLevel=0,isJunk=false}={}){return{name,icon,description,type,slot,value,attack,strength,defense,hp,requiredAttack,requiredDefense,healing,attackSpeed,upgradeLevel,isJunk}}
 
 export const ITEMS={
-  'Coins':item('Coins',{icon:'🪙',type:ITEM_TYPES.CURRENCY,value:1}),
-  'Bones':item('Bones',{icon:'🦴',value:1}),
-  'Feathers':item('Feathers',{icon:'🪶',value:2}),
-  'Animal Hide':item('Animal Hide',{icon:'🟫',value:8}),
-  'Wolf Pelt':item('Wolf Pelt',{icon:'🐺',value:20}),
-  'Spider Silk':item('Spider Silk',{icon:'🕸️',value:15}),
-  'Goblin Tooth':item('Goblin Tooth',{icon:'🦷',value:5}),
-  'Monster Claw':item('Monster Claw',{icon:'🐾',value:15}),
-  'Monster Fang':item('Monster Fang',{icon:'🦷',value:20}),
-  'Raw Shrimp':item('Raw Shrimp',{icon:'🦐',type:ITEM_TYPES.FOOD,value:3,healing:1}),
-  'Raw Trout':item('Raw Trout',{icon:'🐟',type:ITEM_TYPES.FOOD,value:12,healing:2}),
-  'Raw Salmon':item('Raw Salmon',{icon:'🐟',type:ITEM_TYPES.FOOD,value:18,healing:2}),
-  'Raw Lobster':item('Raw Lobster',{icon:'🦞',type:ITEM_TYPES.FOOD,value:35,healing:3}),
-  'Raw Swordfish':item('Raw Swordfish',{icon:'🐟',type:ITEM_TYPES.FOOD,value:50,healing:3}),
-  'Raw Shark':item('Raw Shark',{icon:'🦈',type:ITEM_TYPES.FOOD,value:120,healing:4}),
-  'Copper Ore':item('Copper Ore',{icon:'🟤',value:5}),
-  'Tin Ore':item('Tin Ore',{icon:'🟤',value:5}),
-  'Iron Ore':item('Iron Ore',{icon:'⛏️',value:20}),
-  'Coal':item('Coal',{icon:'⚫',value:18}),
-  'Mithril Ore':item('Mithril Ore',{icon:'🔷',value:65}),
-  'Adamantite Ore':item('Adamantite Ore',{icon:'💚',value:120}),
-  'Runite Ore':item('Runite Ore',{icon:'🔵',value:300}),
-  'Logs':item('Logs',{icon:'🪵',value:4}),
-  'Oak Logs':item('Oak Logs',{icon:'🪵',value:10}),
-  'Willow Logs':item('Willow Logs',{icon:'🪵',value:25}),
-  'Yew Logs':item('Yew Logs',{icon:'🪵',value:90}),
-  'Magic Logs':item('Magic Logs',{icon:'🪵',value:180}),
-  'Bronze Sword':item('Bronze Sword',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:15,attack:2,strength:1,attackSpeed:4}),
-  'Iron Sword':item('Iron Sword',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:50,attack:4,strength:3,attackSpeed:4}),
-  'Steel Sword':item('Steel Sword',{icon:'⚔️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:125,attack:7,strength:6,attackSpeed:4}),
-  'Mithril Sword':item('Mithril Sword',{icon:'⚔️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:300,attack:11,strength:9,attackSpeed:4}),
-  'Adamant Sword':item('Adamant Sword',{icon:'⚔️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:750,attack:16,strength:13,attackSpeed:4}),
-  'Rune Sword':item('Rune Sword',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:1500,attack:22,strength:18,attackSpeed:4}),
-  'Goblin Blade':item('Goblin Blade',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:100,attack:5,strength:3,attackSpeed:4}),
-  'Bone Sword':item('Bone Sword',{icon:'🦴',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:300,attack:10,strength:12,attackSpeed:5}),
-  'Willow Shortbow':item('Willow Shortbow',{icon:'🏹',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:140,attack:10,strength:7,attackSpeed:3}),
-  'Magic Longbow':item('Magic Longbow',{icon:'🏹',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:1200,attack:26,strength:20,attackSpeed:4}),
-  'Crafted Leather Gloves':item('Crafted Leather Gloves',{icon:'🧤',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.GLOVES,value:45,defense:2}),
-  'Sapphire Amulet':item('Sapphire Amulet',{icon:'📿',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.AMULET,value:300,attack:4,defense:3}),
-  'Dragonhide Body':item('Dragonhide Body',{icon:'👕',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.BODY,value:1800,defense:22,hp:3})
+  'Coins':item('Coins',{icon:'🪙',type:ITEM_TYPES.CURRENCY,value:1}),'Bones':item('Bones',{icon:'🦴',value:1}),'Feathers':item('Feathers',{icon:'🪶',value:2}),'Animal Hide':item('Animal Hide',{icon:'🟫',value:8}),'Wolf Pelt':item('Wolf Pelt',{icon:'🐺',value:20}),'Spider Silk':item('Spider Silk',{icon:'🕸️',value:15}),'Goblin Tooth':item('Goblin Tooth',{icon:'🦷',value:5}),'Goblin Ear':item('Goblin Ear',{icon:'👂',value:6}),'Monster Claw':item('Monster Claw',{icon:'🐾',value:15}),'Monster Fang':item('Monster Fang',{icon:'🦷',value:20}),
+  'Raw Chicken':item('Raw Chicken',{icon:'🍗',type:ITEM_TYPES.FOOD,value:5,healing:1}),'Raw Shrimp':item('Raw Shrimp',{icon:'🦐',type:ITEM_TYPES.FOOD,value:3,healing:1}),'Raw Trout':item('Raw Trout',{icon:'🐟',type:ITEM_TYPES.FOOD,value:12,healing:2}),'Raw Salmon':item('Raw Salmon',{icon:'🐟',type:ITEM_TYPES.FOOD,value:18,healing:2}),'Raw Lobster':item('Raw Lobster',{icon:'🦞',type:ITEM_TYPES.FOOD,value:35,healing:3}),'Raw Swordfish':item('Raw Swordfish',{icon:'🐟',type:ITEM_TYPES.FOOD,value:50,healing:3}),'Raw Shark':item('Raw Shark',{icon:'🦈',type:ITEM_TYPES.FOOD,value:120,healing:4}),
+  'Copper Ore':item('Copper Ore',{icon:'🟤',value:5}),'Tin Ore':item('Tin Ore',{icon:'🟤',value:5}),'Iron Ore':item('Iron Ore',{icon:'⛏️',value:20}),'Coal':item('Coal',{icon:'⚫',value:18}),'Mithril Ore':item('Mithril Ore',{icon:'🔷',value:65}),'Adamantite Ore':item('Adamantite Ore',{icon:'💚',value:120}),'Runite Ore':item('Runite Ore',{icon:'🔵',value:300}),'Logs':item('Logs',{icon:'🪵',value:4}),'Oak Logs':item('Oak Logs',{icon:'🪵',value:10}),'Willow Logs':item('Willow Logs',{icon:'🪵',value:25}),'Yew Logs':item('Yew Logs',{icon:'🪵',value:90}),'Magic Logs':item('Magic Logs',{icon:'🪵',value:180}),
+  'Bronze Sword':item('Bronze Sword',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:15,attack:2,strength:1,attackSpeed:4}),'Iron Sword':item('Iron Sword',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:50,attack:4,strength:3,attackSpeed:4}),'Steel Sword':item('Steel Sword',{icon:'⚔️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:125,attack:7,strength:6,attackSpeed:4}),'Mithril Sword':item('Mithril Sword',{icon:'⚔️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:300,attack:11,strength:9,attackSpeed:4}),'Adamant Sword':item('Adamant Sword',{icon:'⚔️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:750,attack:16,strength:13,attackSpeed:4}),'Rune Sword':item('Rune Sword',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:1500,attack:22,strength:18,attackSpeed:4}),'Goblin Blade':item('Goblin Blade',{icon:'🗡️',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:100,attack:5,strength:3,attackSpeed:4}),'Goblin Crown':item('Goblin Crown',{icon:'👑',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.HEAD,value:750,attack:2,strength:2,defense:3}),'Bone Sword':item('Bone Sword',{icon:'🦴',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:300,attack:10,strength:12,attackSpeed:5}),'Willow Shortbow':item('Willow Shortbow',{icon:'🏹',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:140,attack:10,strength:7,attackSpeed:3}),'Magic Longbow':item('Magic Longbow',{icon:'🏹',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.WEAPON,value:1200,attack:26,strength:20,attackSpeed:4}),'Crafted Leather Gloves':item('Crafted Leather Gloves',{icon:'🧤',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.GLOVES,value:45,defense:2}),'Sapphire Amulet':item('Sapphire Amulet',{icon:'📿',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.AMULET,value:300,attack:4,defense:3}),'Dragonhide Body':item('Dragonhide Body',{icon:'👕',type:ITEM_TYPES.EQUIPMENT,slot:EQUIPMENT_SLOTS.BODY,value:1800,defense:22,hp:3})
 };
-
 export function getItem(name){return ITEMS[name]||item(name)}
 export function stackKey(entry){return `${entry.name}::${entry.upgradeLevel||0}`}
-export function createUpgrade(source){
-  if(source.type!==ITEM_TYPES.EQUIPMENT||(source.upgradeLevel||0)>=10)return source;
-  const level=(source.upgradeLevel||0)+1;
-  const baseName=source.name.replace(/ \+\d+$/,'');
-  const bonus=v=>v===0?0:Math.ceil(v*1.02);
-  return{...source,name:`${baseName} +${level}`,upgradeLevel:level,attack:bonus(source.attack||0),strength:bonus(source.strength||0),defense:bonus(source.defense||0),hp:bonus(source.hp||0)};
-}
+export function createUpgrade(source){if(source.type!==ITEM_TYPES.EQUIPMENT||(source.upgradeLevel||0)>=10)return source;const level=(source.upgradeLevel||0)+1;const baseName=source.name.replace(/ \+\d+$/,'');const bonus=v=>v===0?0:Math.ceil(v*1.02);return{...source,name:`${baseName} +${level}`,upgradeLevel:level,attack:bonus(source.attack||0),strength:bonus(source.strength||0),defense:bonus(source.defense||0),hp:bonus(source.hp||0)}}
