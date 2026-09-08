@@ -1,0 +1,3 @@
+enemy_sprites=57
+item_sprites=375
+format=lossless_webp_atlas
