@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#14110d" />
+  <title>Elderwild Studio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>Elderwild Studio</h1>
+      <p>Mobile content editor for items and enemies</p>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab active" data-tab="items">Items</button>
+      <button class="tab" data-tab="enemies">Enemies</button>
+      <button class="tab" data-tab="data">Import / Export</button>
+    </nav>
+
+    <section id="items" class="panel active">
+      <div class="toolbar">
+        <input id="itemSearch" class="search" type="search" placeholder="Search items..." />
+        <button id="newItemBtn" class="primary">+ New Item</button>
+      </div>
+      <div id="itemList" class="card-list"></div>
+    </section>
+
+    <section id="enemies" class="panel">
+      <div class="toolbar">
+        <input id="enemySearch" class="search" type="search" placeholder="Search enemies..." />
+        <button id="newEnemyBtn" class="primary">+ New Enemy</button>
+      </div>
+      <div id="enemyList" class="card-list"></div>
+    </section>
+
+    <section id="data" class="panel">
+      <div class="data-grid">
+        <article class="card">
+          <h2>Export</h2>
+          <p>Download all saved Elderwild Studio content as a JSON file.</p>
+          <button id="exportBtn" class="primary full">Export JSON</button>
+        </article>
+        <article class="card">
+          <h2>Import</h2>
+          <p>Load a previously exported Elderwild Studio JSON file.</p>
+          <input id="importInput" type="file" accept="application/json,.json" />
+        </article>
+        <article class="card danger-zone">
+          <h2>Local Data</h2>
+          <p>Items and enemies are stored in this browser using local storage.</p>
+          <button id="clearBtn" class="danger full">Clear All Local Data</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="editorDialog" class="editor-dialog">
+    <form id="editorForm" method="dialog">
+      <div class="dialog-header">
+        <h2 id="editorTitle">Editor</h2>
+        <button type="button" id="closeDialogBtn" class="icon-btn" aria-label="Close">×</button>
+      </div>
+      <div id="editorFields" class="form-grid"></div>
+      <div class="dialog-actions">
+        <button type="button" id="cancelBtn" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="emptyTemplate">
+    <div class="empty-state">
+      <strong>Nothing here yet.</strong>
+      <span>Create your first entry to get started.</span>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
