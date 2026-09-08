@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17130f">
+  <title>Elderwild Web</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <h1>Elderwild</h1>
+        <p class="subtitle">ScapeRunner web conversion</p>
+      </div>
+      <div class="player-summary">
+        <strong id="player-name">Adventurer</strong>
+        <span id="total-level">Total 12</span>
+      </div>
+    </header>
+
+    <main id="view" class="view"></main>
+
+    <section id="activity-bar" class="activity-bar hidden" aria-live="polite">
+      <div class="activity-copy">
+        <strong id="activity-name"></strong>
+        <span id="activity-status"></span>
+      </div>
+      <div class="progress-track"><div id="activity-progress" class="progress-fill"></div></div>
+      <button id="stop-activity" class="danger-button">Stop</button>
+    </section>
+
+    <nav class="bottom-nav">
+      <button data-view="home" class="nav-button active">Home</button>
+      <button data-view="skills" class="nav-button">Skills</button>
+      <button data-view="combat" class="nav-button">Combat</button>
+      <button data-view="inventory" class="nav-button">Inventory</button>
+      <button data-view="settings" class="nav-button">Settings</button>
+    </nav>
+  </div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
