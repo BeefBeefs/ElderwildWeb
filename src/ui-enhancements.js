@@ -1,4 +1,5 @@
 import{ENEMIES}from'./combat.js';
+import'./combat-mini-bar.js';
 
 const AREAS=[
   {tier:1,name:'Greenvale',description:'Bright grasslands, lakes, and castle countryside.'},
