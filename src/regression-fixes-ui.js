@@ -1,3 +1,4 @@
+import'./home-log-fixes-ui.js?v=20260909-48';
 import{ENEMIES}from'./combat.js';
 
 const style=document.createElement('style');
