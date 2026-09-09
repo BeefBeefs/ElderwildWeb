@@ -14,10 +14,12 @@ if(!Game.prototype.__combatAbilitiesPatched){
   const originalSetStyle=Game.prototype.setCombatStyle;
   Game.prototype.setCombatStyle=function(style){originalSetStyle.apply(this,arguments);const c=this.state.combat,a=COMBAT_ABILITIES[c.primedAbility];if(a&&a.style!==style){c.primedAbility=null;this.save();this.onChange()}};
   Game.prototype.activateCombatAbility=function(name){const c=this.state.combat,a=COMBAT_ABILITIES[name];if(!c.active||!a||a.style!==c.style||c.primedAbility||Number(c.abilityCooldown)>0)return false;c.primedAbility=name;c.abilityCooldown=ABILITY_COOLDOWN_TICKS;this.save();this.onChange();return true};
+  Game.prototype.setAutoUseCombatAbility=function(enabled){this.state.autoUseCombatAbility=!!enabled;this.save();this.onChange()};
 
   Game.prototype.tickCombat=function(){
     const c=this.state.combat,enemy=ENEMIES.find(e=>e.name===c.enemyName);if(!enemy){this.stopFight(false);return}
     if(Number(c.abilityCooldown)>0)c.abilityCooldown=Math.max(0,Number(c.abilityCooldown)-1);
+    if(this.state.autoUseCombatAbility&&c.active&&!c.primedAbility&&Number(c.abilityCooldown)<=0){const autoAbility=Object.keys(COMBAT_ABILITIES).find(name=>COMBAT_ABILITIES[name].style===c.style);if(autoAbility)this.activateCombatAbility(autoAbility)}
     if(c.autoEatCooldown>0)c.autoEatCooldown--;this.tryAutoEat();c.playerTick++;c.enemyTick++;
     const style=c.style,baseAtk=weaknessAttack(enemy,style,styledAttack(this.effectiveAttack(),style)),str=styledStrength(this.effectiveStrength(),style),def=styledDefense(this.effectiveDefense(),style);
     if(c.playerTick>=this.attackSpeed()){
