@@ -1,4 +1,5 @@
 import'./home-log-fixes-ui.js?v=20260909-48';
+import'./inventory-filter-layout-ui.js?v=20260909-49';
 import{ENEMIES}from'./combat.js';
 
 const style=document.createElement('style');
