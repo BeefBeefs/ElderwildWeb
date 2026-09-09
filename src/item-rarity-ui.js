@@ -1,4 +1,4 @@
-import'./landing-ui.js';
+import'./landing-ui.js?v=20260909-45';
 import{decorateItemElement,itemRarity,rarityColor}from'./item-rarity.js';
 
 const style=document.createElement('style');
