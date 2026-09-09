@@ -2,6 +2,7 @@ import{ITEM_TYPES}from'./items.js';
 const view=document.querySelector('#view');
 const style=document.createElement('style');
 style.textContent=`
+.home-equipment{display:none!important}
 .equipment-grid.compact-equipment-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important}
 .equipment-slot.compact-equipment-slot{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;min-width:0!important;min-height:68px!important;padding:4px!important}
 .equipment-slot.compact-equipment-slot>.equipment-item-button{order:1!important;min-height:38px!important;height:38px!important;padding:3px!important;display:flex!important;align-items:center!important;justify-content:center!important}
