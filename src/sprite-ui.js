@@ -3,8 +3,8 @@ import{ITEMS}from'./items.js';
 import{SKILLS}from'./data.js';
 
 const manifestUrl=new URL('../assets/sprite-manifest.json',import.meta.url);
-let manifest=null;
-try{manifest=await fetch(manifestUrl,{cache:'reload'}).then(r=>{if(!r.ok)throw new Error(`Sprite manifest ${r.status}`);return r.json()})}catch(error){console.warn('Sprite manifest unavailable',error)}
+let manifest=window.__elderwildPreloadCache?.manifest||null;
+if(!manifest){try{manifest=await fetch(manifestUrl,{cache:'force-cache'}).then(r=>{if(!r.ok)throw new Error(`Sprite manifest ${r.status}`);return r.json()})}catch(error){console.warn('Sprite manifest unavailable',error)}}
 
 const style=document.createElement('style');
 style.textContent=`.game-sprite{display:inline-block;width:32px;height:32px;min-width:32px;vertical-align:middle;background-repeat:no-repeat;image-rendering:pixelated;image-rendering:crisp-edges}.skill-sprite{width:24px;height:24px;min-width:24px;background-size:24px 24px!important}.sprite-label{display:inline-flex!important;align-items:center;gap:7px}.sprite-label>.game-sprite{flex:0 0 32px}.sprite-label>.skill-sprite{flex-basis:24px}.combat-mini-copy .sprite-label{display:flex!important}.rare-item.sprite-label{justify-content:center}.drop-row .sprite-label{gap:5px}.equipment-slot .game-sprite,.inventory-slot .game-sprite{flex:0 0 32px}.skill-icon{display:inline-flex;align-items:center;vertical-align:middle}.activity-copy #activity-name.sprite-label{display:flex!important}`;
@@ -41,18 +41,15 @@ function enhanceSkills(root=document){
   if(activeSkill)root.querySelectorAll?.('#view .activity-card').forEach(card=>{const btn=card.querySelector('[data-activity]'),label=card.querySelector('strong');if(btn&&label)decorateSkillText(label,activeSkill,btn.dataset.activity)});
   const activity=document.querySelector('#activity-name');if(activity&&!activity.querySelector('.skill-sprite')){const skill=skillFromText(activity.textContent);if(skill){const text=activity.textContent.trim(),sprite=makeSprite('skills',skill);if(sprite){activity.classList.add('sprite-label');activity.replaceChildren(sprite,document.createTextNode(text))}}}
 }
-
 function enhance(root=document){
   enhanceSkills(root);
   root.querySelectorAll?.('#view .activity-card strong,#view .card .skill-row strong,#view h3').forEach(decorateEnemy);
   root.querySelectorAll?.('#view .inventory-slot .skill-row strong,#view .equipment-slot span,#view .drop-row span:first-child,.rare-notification .rare-item').forEach(decorateItem);
   root.querySelectorAll?.('.offline-summary li,.offline-summary-row,.offline-loot-row').forEach(decorateItem);
 }
-
 let queued=false;function queueEnhance(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;enhance(document)})}
 new MutationObserver(queueEnhance).observe(document.body,{childList:true,subtree:true});
 window.addEventListener('elderwild-game-state',queueEnhance);
 window.addEventListener('elderwild-rare-drop',()=>setTimeout(queueEnhance,0));
 enhance(document);
-
 export{makeSprite};
