@@ -29,7 +29,7 @@ function makeSprite(kind,name){
 window.__elderwildMakeSprite=makeSprite;
 function findName(text,names){const value=String(text||'').trim();return names.find(name=>value===name||value.endsWith(` ${name}`)||value.startsWith(`${name} `)||value.startsWith(`${name} ·`)||value.startsWith(`${name} ×`))||null}
 function decorate(el,kind,name){if(!el||el.dataset.spriteEnhanced==='1')return;const sprite=makeSprite(kind,name);if(!sprite)return;const original=el.textContent.trim();let label=original;if(original===name||original.endsWith(` ${name}`))label=name;el.textContent='';el.classList.add('sprite-label');el.append(sprite,document.createTextNode(label));el.dataset.spriteEnhanced='1'}
-function decorateEnemy(el){if(!el||el.dataset.spriteEnhanced==='1')return;const name=findName(el.textContent,enemyNames);if(name)decorate(el,'enemies',name)}
+function decorateEnemy(el){if(!el||el.dataset.spriteEnhanced==='1'||el.closest('.enemy-select-drop,.combat-drop-preview-row,.collection-detail-drop,.drop-row,.inventory-slot,.equipment-slot,.rare-notification'))return;const name=findName(el.textContent,enemyNames);if(name)decorate(el,'enemies',name)}
 function decorateItem(el){if(!el||el.dataset.spriteEnhanced==='1'||el.closest('.drop-row.unknown'))return;const name=findName(el.textContent,itemNames);if(name)decorate(el,'items',name)}
 function skillFromText(text){const value=String(text||'');return skillNames.find(name=>value.includes(name))||null}
 function decorateSkillText(el,skill,label){if(!el||el.dataset.skillSpriteEnhanced==='1')return;const sprite=makeSprite('skills',skill);if(!sprite)return;el.textContent='';el.classList.add('sprite-label');el.append(sprite,document.createTextNode(label));el.dataset.skillSpriteEnhanced='1'}
