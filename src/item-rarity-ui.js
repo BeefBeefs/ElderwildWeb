@@ -1,3 +1,4 @@
+import'./landing-ui.js';
 import{decorateItemElement,itemRarity,rarityColor}from'./item-rarity.js';
 
 const style=document.createElement('style');
@@ -14,16 +15,12 @@ document.head.append(style);
 const view=document.querySelector('#view');
 function clean(s){return String(s||'').replace(/^×\s*\d+\s*/,'').replace(/\s+×\s*\d+$/,'').trim()}
 function decorate(){
-  // Inventory/equipment buttons already carry exact item names in their title.
   view.querySelectorAll('.inventory-item-button[title],.equipment-item-button[title]').forEach(button=>{
     const name=button.title;decorateItemElement(button,name);decorateItemElement(button.closest('.inventory-slot,.equipment-slot'),name);
   });
-  // Item detail popup.
   const modal=document.querySelector('.inventory-detail-modal:not(.hidden)');
   if(modal){const title=modal.querySelector('.inventory-detail-head h3'),name=clean(title?.textContent);if(name){const art=modal.querySelector('.inventory-detail-art');decorateItemElement(art,name);title?.classList.add('rarity-name');if(title)title.style.color=rarityColor(name)}}
-  // Combat victory loot rows use the item name followed by quantity.
   view.querySelectorAll('.combat-loot-row').forEach(row=>{const name=clean(row.querySelector('span')?.textContent?.replace(/ \+\d+$/,''));if(name)decorateItemElement(row,name)});
-  // Drop tables: discovered names only. Unknown entries remain neutral/black.
   view.querySelectorAll('.drop-row:not(.unknown)').forEach(row=>{const first=row.querySelector('span:first-child');const name=clean(first?.textContent);if(name&&name!=='???')decorateItemElement(row,name)});
 }
 let queued=false;function queue(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;decorate()})}
