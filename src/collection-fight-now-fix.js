@@ -1,0 +1,2 @@
+const view=document.querySelector('#view');
+view.addEventListener('click',event=>{const button=event.target.closest('.collection-detail .action-button');if(!button||button.textContent.trim()!=='Fight Now')return;const detail=button.closest('.collection-detail'),enemyName=detail?.querySelector('h3')?.textContent?.trim(),game=window.__elderwildGame;if(!enemyName||!game)return;event.preventDefault();event.stopImmediatePropagation();game.startFight(enemyName);document.querySelector('.nav-button[data-view="combat"]')?.click();},{capture:true});
