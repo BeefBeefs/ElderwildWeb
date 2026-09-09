@@ -27,6 +27,12 @@ function fixHome(g){
     const itemName=split>=0?title.slice(split+1).trim():'';
     if(itemName)decorateItemElement(slot,itemName);
   });
+  const goals=view.querySelector('.home-goals');
+  if(goals){
+    const cards=[...goals.querySelectorAll('.home-goal')];
+    cards.forEach(card=>card.hidden=card.classList.contains('complete'));
+    goals.hidden=!cards.some(card=>!card.classList.contains('complete'));
+  }
 }
 
 function fixCollection(g){
