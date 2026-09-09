@@ -1,5 +1,4 @@
 import'./home-log-fixes-ui.js?v=20260909-48';
-import'./inventory-filter-layout-ui.js?v=20260909-49';
 import{ENEMIES}from'./combat.js';
 
 const style=document.createElement('style');
@@ -17,7 +16,17 @@ function fixCollectionProgress(){
   const text=`${found} / ${total}`;
   if(value.textContent!==text)value.textContent=text;
 }
-let queued=false;function queue(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;fixCollectionProgress()})}
+function dedupeCombatSelection(){
+  const g=window.__elderwildGame,c=g?.state?.combat;if(!g||c?.active||c?.respawning)return;
+  const seen=new Set();
+  for(const button of view.querySelectorAll('.activity-card [data-enemy]')){
+    const name=button.dataset.enemy,card=button.closest('.activity-card');
+    if(!name||!card)continue;
+    if(seen.has(name)){card.remove();continue}
+    seen.add(name);
+  }
+}
+let queued=false;function queue(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;fixCollectionProgress();dedupeCombatSelection()})}
 new MutationObserver(queue).observe(view,{childList:true,subtree:true});
 window.addEventListener('elderwild-game-state',queue);
 window.addEventListener('pageshow',queue);
